@@ -8,7 +8,7 @@ $factory->define(App\Reply::class, function (Faker $faker) {
             return factory('App\User')->create()->id;
         },
         "thread_id" => function () {
-            return factory('App\Thread ')->create()->id;
+            return factory('App\Thread')->create()->id;
         },
         "body" => $faker->paragraph ,
     ];
