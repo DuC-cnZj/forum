@@ -2,7 +2,7 @@
     <div class="panel-heading">
         <a href="#">
             {{ optional($reply->owner)->name }}
-        </a> said {{ $thread->created_at->diffForHumans() }} ...
+        </a> said {{ $reply->created_at->diffForHumans() }} ...
     </div>
 
     <div class="panel-body">
