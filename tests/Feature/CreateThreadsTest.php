@@ -15,7 +15,7 @@ class CreateThreadsTest extends TestCase
     {
         $this->expectException('Illuminate\Auth\AuthenticationException');
 
-        $thread = factory('App\Thread')->make();
+        $thread = make('App\Thread');
 
         $this->post('/threads', $thread->toArray());
     }
@@ -24,11 +24,13 @@ class CreateThreadsTest extends TestCase
     public function an_authenticated_user_can_crate_new_forum_thread()
     {
         // 给我一个登陆的用户
-        $this->actingAs(factory('App\User')->create());
+//        $this->actingAs(factory('App\User')->create());
+
+        $this->signIn();
 
         // 点击发表评论 raw() 返回数组
 //        $thread = factory('App\Thread')->raw();
-        $thread = factory('App\Thread')->make();
+        $thread = make('App\Thread');
 
         $this->post('/threads', $thread->toArray());
         // 可以看到 thread page
