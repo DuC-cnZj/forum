@@ -34,4 +34,25 @@ class ParticipateInForumTest extends TestCase
             ->assertSee($reply->body);
     }
 
+    /** @test */
+    public function a_reply_requires_a_body()
+    {
+       $this->publishReply(['body' => null])
+           ->assertSessionHasErrors('body');
+    }
+
+    public function publishReply($overrides = [])
+    {
+        $this->withExceptionHandling()
+            ->signIn();
+
+        $thread = factory('App\Thread')->create();
+
+        $reply = factory('App\Reply')->make($overrides);
+
+        $this->post($thread->path() . '/replies', $reply->toArray());
+
+
+        return $this->post($thread->path() . 'replies', $reply->toArray());
+    }
 }
