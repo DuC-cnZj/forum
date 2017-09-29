@@ -38,7 +38,7 @@ class CreateThreadsTest extends TestCase
 
         // 点击发表评论 raw() 返回数组
 //        $thread = factory('App\Thread')->raw();
-        $thread = make('App\Thread');
+        $thread = create('App\Thread');
 
         $this->post('/threads', $thread->toArray());
         // 可以看到 thread page

@@ -23,7 +23,7 @@ class ThreadTest extends TestCase
     {
         $thread = create('App\Thread');
 //        dd($thread);
-        $this->assertEquals("/threads/{$this->channel->slug}/{$this->id}", $thread->path());
+        $this->assertEquals("/threads/{$thread->channel->slug}/{$thread->id}", $thread->path());
     }
 
     /** @test */
