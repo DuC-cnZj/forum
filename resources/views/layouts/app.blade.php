@@ -48,6 +48,10 @@
                             @endforeach
                         </ul>
                     </li>
+
+                    <li>
+                        <a href="/threads/create">New Thread</a>
+                    </li>
                 </ul>
 
                 <!-- Right Side Of Navbar -->
