@@ -22,10 +22,10 @@ class AppServiceProvider extends ServiceProvider
             return auth()->check();
         });
 
-        \View::share('channels', Channel::all());
-//        \View::composer('*', function ($view) {
-//            $view->with('channels', Channel::all());
-//        });
+//        \View::share('channels', Channel::all());
+        \View::composer('*', function ($view) {
+            $view->with('channels', Channel::all());
+        });
     }
 
     /**
