@@ -32,3 +32,20 @@ Route::get('/threads/{channel}/{thread}', 'ThreadsController@show');
 Route::post('/threads', 'ThreadsController@store');
 
 //Route::resource('threads', 'ThreadsController');
+
+Route::get('duc', function () {
+    $collection = collect([1, 2, 3, 4]);
+
+    $filtered = $collection->map(function ($value, $key) {
+//        return $value > 2;
+        if ($value > 2) {
+            return $value;
+        }
+    });
+
+//    $filtered = $collection->filter(function ($value, $key) {
+//        return $value > 2;
+//    });
+
+    return $filtered->all();
+});
