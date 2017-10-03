@@ -12,8 +12,14 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    <style>
+        body { padding-bottom: 100px; }
+        .flex { flex: 1; }
+        .level { display: flex;align-items: center; }
+    </style>
 </head>
-<body style="padding-bottom: 100px">
+<body>
 <div id="app">
     <nav class="navbar navbar-default navbar-static-top">
         <div class="container">
@@ -45,6 +51,7 @@
                             @signIn
                             <li><a href="/threads?by={{ auth()->user()->name }}">My Threads</a></li>
                             @endsignIn
+                            <li><a href="/threads?popular=1">Popular Threads</a></li>
                         </ul>
                     </li>
 
