@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-8">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <a href="#">{{ $thread->creator->name }}</a> posted:
@@ -14,32 +14,38 @@
                         {{ $thread->body }}
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-                @foreach($thread->replies as $reply)
+                @foreach($replies as $reply)
                     @include('threads.reply')
                 @endforeach
-            </div>
-        </div>
 
-        @signIn
-        <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+                {{ $replies->links() }}
+
+                @signIn
                 <form action="{{ $thread->path() . "/replies" }}" method="POST">
                     {{ csrf_field() }}
                     <div class="form-group">
-                        <textarea name="body" id="body" class="form-control" rows="5" placeholder="have something to say?"></textarea>
+                            <textarea name="body" id="body" class="form-control" rows="5"
+                                      placeholder="have something to say?"></textarea>
                     </div>
 
                     <button type="submit" class="btn btn-default">Post</button>
                 </form>
+                @else
+                    <p class="text-center">请 <a href="{{ route('login') }}">登陆</a> 之后再发表评论</p>
+                    @endsignIn
+            </div>
+
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <p>
+                            This Thread was published {{ $thread->created_at->diffForHumans() }} by
+                            <a href="#">{{ $thread->creator->name }}</a>, and currently has {{ $thread->replies_count }} {{ str_plural('comment', $thread->replies_count) }}.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
-        @else
-            <p class="text-center">请 <a href="{{ route('login') }}">登陆</a> 之后再发表评论</p>
-        @endsignIn
     </div>
 @endsection
