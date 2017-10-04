@@ -35,6 +35,9 @@ Route::post('/threads', 'ThreadsController@store');
 
 Route::post('replies/{reply}/favorites', 'FavoritesController@store');
 
+Route::get('profiles/{user}', 'ProfilesController@show')->name('profile');
+
+
 Route::get('duc', function () {
     $collection = collect([1, 2, 3, 4]);
 
