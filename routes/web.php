@@ -33,6 +33,8 @@ Route::post('/threads', 'ThreadsController@store');
 
 //Route::resource('threads', 'ThreadsController');
 
+Route::post('replies/{reply}/favorites', 'FavoritesController@store');
+
 Route::get('duc', function () {
     $collection = collect([1, 2, 3, 4]);
 
