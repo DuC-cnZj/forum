@@ -71,9 +71,9 @@ class ThreadsController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-           'title' => 'required',
-           'body' => 'required',
-           'channel_id' => 'required|exists:channels,id',
+            'title'      => 'required',
+            'body'       => 'required',
+            'channel_id' => 'required|exists:channels,id',
         ]);
 
         $thread = Thread::create([
@@ -129,9 +129,16 @@ class ThreadsController extends Controller
      * @param  \App\Thread $thread
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Thread $thread)
+    public function destroy($channel, Thread $thread)
     {
-        //
+//        $thread->replies()->delete();
+        $thread->delete();
+
+        if (request()->wantsJson()) {
+            return response([], 204);
+        }
+
+        return redirect('/threads');
     }
 
     /**
@@ -151,4 +158,5 @@ class ThreadsController extends Controller
 
         return $threads;
     }
+
 }
