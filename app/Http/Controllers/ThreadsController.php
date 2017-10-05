@@ -131,6 +131,11 @@ class ThreadsController extends Controller
      */
     public function destroy($channel, Thread $thread)
     {
+        $this->authorize('update', $thread);
+
+//        if ($thread->user_id != auth()->id()) {
+//            abort(403, "you don't have permission");
+//        }
 //        $thread->replies()->delete();
         $thread->delete();
 
