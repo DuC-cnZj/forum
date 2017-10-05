@@ -1,0 +1,210 @@
+[33mcommit a5fabfed4f01550ad68d2f17f62d69ff7332db7d[m
+Author: ducong <1025434218@qq.com>
+Date:   Thu Oct 5 07:58:05 2017 +0000
+
+    25(好多看不懂，多学习，这节课很长知识)
+
+[1mdiff --git a/app/Activity.php b/app/Activity.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..178d332[m
+[1m--- /dev/null[m
+[1m+++ b/app/Activity.php[m
+[36m@@ -0,0 +1,15 @@[m
+[32m+[m[32m<?php[m
+[32m+[m
+[32m+[m[32mnamespace App;[m
+[32m+[m
+[32m+[m[32muse Illuminate\Database\Eloquent\Model;[m
+[32m+[m
+[32m+[m[32mclass Activity extends Model[m
+[32m+[m[32m{[m
+[32m+[m[32m    protected $guarded = [];[m
+[32m+[m
+[32m+[m[32m    public function subject()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        return $this->morphTo();[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/RecordsActivity.php b/app/RecordsActivity.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..e7c83fc[m
+[1m--- /dev/null[m
+[1m+++ b/app/RecordsActivity.php[m
+[36m@@ -0,0 +1,51 @@[m
+[32m+[m[32m<?php[m
+[32m+[m
+[32m+[m[32mnamespace App;[m
+[32m+[m
+[32m+[m
+[32m+[m[32mtrait RecordsActivity[m
+[32m+[m[32m{[m
+[32m+[m
+[32m+[m[32m    protected static function bootRecordsActivity()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        if (auth()->guest()) return;[m
+[32m+[m
+[32m+[m[32m        foreach (static::getActivitiesToRecord() as $event) {[m
+[32m+[m[32m            static::$event(function ($model) use ($event) {[m
+[32m+[m[32m                $model->recordActivity($event);[m
+[32m+[m[32m            });[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    protected static function getActivitiesToRecord()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        return ['created'];[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    protected function recordActivity($event)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $this->activity()->create([[m
+[32m+[m[32m            'user_id' => auth()->id(),[m
+[32m+[m[32m            'type'    => $this->getActivityType($event),[m
+[32m+[m[32m        ]);[m
+[32m+[m
+[32m+[m[32m//        Activity::create([[m
+[32m+[m[32m//            'user_id'      => auth()->id(),[m
+[32m+[m[32m//            'type'         => $this->getActivityType($event),[m
+[32m+[m[32m//            'subject_id'   => $this->id,[m
+[32m+[m[32m//            'subject_type' => get_class($this),[m
+[32m+[m[32m//        ]);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public function activity()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        return $this->morphMany('App\Activity', 'subject');[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    protected function getActivityType($event)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $type = strtolower((new \ReflectionClass($this))->getShortName());[m
+[32m+[m
+[32m+[m[32m        return "{$event}_{$type}";[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/app/Reply.php b/app/Reply.php[m
+[1mindex 63af22b..60ccf3b 100644[m
+[1m--- a/app/Reply.php[m
+[1m+++ b/app/Reply.php[m
+[36m@@ -6,7 +6,7 @@[m [muse Illuminate\Database\Eloquent\Model;[m
+ [m
+ class Reply extends Model[m
+ {[m
+[31m-    use Favoritable;[m
+[32m+[m[32m    use Favoritable, RecordsActivity;[m
+ [m
+     protected $fillable = ['body', 'user_id'];[m
+ [m
+[1mdiff --git a/app/Thread.php b/app/Thread.php[m
+[1mindex 9a1dc89..4b8faa8 100644[m
+[1m--- a/app/Thread.php[m
+[1m+++ b/app/Thread.php[m
+[36m@@ -6,6 +6,8 @@[m [muse Illuminate\Database\Eloquent\Model;[m
+ [m
+ class Thread extends Model[m
+ {[m
+[32m+[m[32m    use RecordsActivity;[m
+[32m+[m
+     protected $guarded = [];[m
+ [m
+     protected $with = ['creator', 'channel'];[m
+[1mdiff --git a/database/migrations/2017_10_05_071015_create_activities_table.php b/database/migrations/2017_10_05_071015_create_activities_table.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..b4b8e5c[m
+[1m--- /dev/null[m
+[1m+++ b/database/migrations/2017_10_05_071015_create_activities_table.php[m
+[36m@@ -0,0 +1,35 @@[m
+[32m+[m[32m<?php[m
+[32m+[m
+[32m+[m[32muse Illuminate\Support\Facades\Schema;[m
+[32m+[m[32muse Illuminate\Database\Schema\Blueprint;[m
+[32m+[m[32muse Illuminate\Database\Migrations\Migration;[m
+[32m+[m
+[32m+[m[32mclass CreateActivitiesTable extends Migration[m
+[32m+[m[32m{[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Run the migrations.[m
+[32m+[m[32m     *[m
+[32m+[m[32m     * @return void[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function up()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        Schema::create('activities', function (Blueprint $table) {[m
+[32m+[m[32m            $table->increments('id');[m
+[32m+[m[32m            $table->unsignedInteger('user_id')->index();[m
+[32m+[m[32m            $table->unsignedInteger('subject_id')->index();[m
+[32m+[m[32m            $table->string('subject_type', 50);[m
+[32m+[m[32m            $table->string('type', 50);[m
+[32m+[m[32m            $table->timestamps();[m
+[32m+[m[32m        });[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Reverse the migrations.[m
+[32m+[m[32m     *[m
+[32m+[m[32m     * @return void[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function down()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        Schema::dropIfExists('activities');[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/tests/Unit/ActivityTest.php b/tests/Unit/ActivityTest.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..eddf065[m
+[1m--- /dev/null[m
+[1m+++ b/tests/Unit/ActivityTest.php[m
+[36m@@ -0,0 +1,52 @@[m
+[32m+[m[32m<?php[m
+[32m+[m
+[32m+[m[32mnamespace Tests\Feature;[m
+[32m+[m
+[32m+[m[32muse App\Activity;[m
+[32m+[m[32muse Illuminate\Foundation\Testing\DatabaseMigrations;[m
+[32m+[m[32muse Tests\TestCase;[m
+[32m+[m[32muse Illuminate\Foundation\Testing\RefreshDatabase;[m
+[32m+[m
+[32m+[m[32mclass ActivityTest extends TestCase[m
+[32m+[m[32m{[m
+[32m+[m[32m    use DatabaseMigrations;[m
+[32m+[m
+[32m+[m[32m    /** @test */[m
+[32m+[m[32m    public function it_records_activity_when_a_thread_created()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $this->signIn();[m
+[32m+[m
+[32m+[m[32m        $thread = create('App\Thread');[m
+[32m+[m
+[32m+[m[32m        $this->assertDatabaseHas('activities', [[m
+[32m+[m[32m           'type' => 'created_thread',[m
+[32m+[m[32m           'user_id' => auth()->id(),[m
+[32m+[m[32m            'subject_id' => $thread->id,[m
+[32m+[m[32m            'subject_type' => get_class($thread),[m
+[32m+[m[32m        ]);[m
+[32m+[m
+[32m+[m[32m        $activity = Activity::first();[m
+[32m+[m
+[32m+[m[32m        $this->assertEquals($activity->subject->id, $thread->id);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /** @test */[m
+[32m+[m[32m    public function it_records_activity_a_reply_created()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $this->signIn();[m
+[32m+[m
+[32m+[m[32m        $reply = create('App\Reply');[m
+[32m+[m
+[32m+[m[32m        $this->assertEquals(2, Activity::count());[m
+[32m+[m[32m//        $this->assertDatabaseHas('activities', [[m
+[32m+[m[32m//            'type' => 'created_reply',[m
+[32m+[m[32m//            'user_id' => auth()->id(),[m
+[32m+[m[32m//            'subject_id' => $reply->id,[m
+[32m+[m[32m//            'subject_type' => get_class($reply),[m
+[32m+[m[32m//        ]);[m
+[32m+[m[32m//[m
+[32m+[m[32m//        $activity = Activity::first();[m
+[32m+[m[32m//[m
+[32m+[m[32m//        $this->assertEquals($activity->subject->id, $reply->id);[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m

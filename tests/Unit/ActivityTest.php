@@ -19,9 +19,9 @@ class ActivityTest extends TestCase
         $thread = create('App\Thread');
 
         $this->assertDatabaseHas('activities', [
-           'type' => 'created_thread',
-           'user_id' => auth()->id(),
-            'subject_id' => $thread->id,
+            'type'         => 'created_thread',
+            'user_id'      => auth()->id(),
+            'subject_id'   => $thread->id,
             'subject_type' => get_class($thread),
         ]);
 
