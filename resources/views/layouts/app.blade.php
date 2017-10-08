@@ -14,9 +14,18 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
     <style>
-        body { padding-bottom: 100px; }
-        .flex { flex: 1; }
-        .level { display: flex;align-items: center; }
+        body {
+            padding-bottom: 100px;
+        }
+
+        .flex {
+            flex: 1;
+        }
+
+        .level {
+            display: flex;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -24,9 +33,11 @@
     @include('layouts.nav')
 
     @yield('content')
+    {{--<example></example>--}}
+    <flash message="{{ session('flash') }}"></flash>
 </div>
 
 <!-- Scripts -->
-<script src="{{ asset('js/app.js') }}"></script>
+<script src="{{ mix('js/app.js') }}"></script>
 </body>
 </html>
