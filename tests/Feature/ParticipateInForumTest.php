@@ -37,8 +37,8 @@ class ParticipateInForumTest extends TestCase
     /** @test */
     public function a_reply_requires_a_body()
     {
-       $this->publishReply(['body' => null])
-           ->assertSessionHasErrors('body');
+        $this->publishReply(['body' => null])
+            ->assertSessionHasErrors('body');
     }
 
     public function publishReply($overrides = [])
@@ -54,5 +54,30 @@ class ParticipateInForumTest extends TestCase
 
 
         return $this->post($thread->path() . 'replies', $reply->toArray());
+    }
+
+    /** @test */
+    public function unauthenticated_users_cannot_delete_replies()
+    {
+        $this->withExceptionHandling();
+
+        $reply = create('App\Reply');
+
+        $this->delete("replies/{$reply->id}")
+            ->assertRedirect('/login');
+
+        $this->signIn()
+            ->delete("replies/{$reply->id}")
+            ->assertStatus(403);
+    }
+
+    /** @test */
+    public function authenticated_users_can_delete_replies()
+    {
+        $this->signIn();
+
+        $reply = create('App\Reply', ['user_id' => auth()->id()]);
+        $this->delete("replies/{$reply->id}")->assertStatus(302);
+        $this->assertDatabaseMissing('replies', $reply->toArray());
     }
 }
