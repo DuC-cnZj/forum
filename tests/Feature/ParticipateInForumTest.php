@@ -80,4 +80,32 @@ class ParticipateInForumTest extends TestCase
         $this->delete("replies/{$reply->id}")->assertStatus(302);
         $this->assertDatabaseMissing('replies', $reply->toArray());
     }
+
+    /** @test */
+    public function authenticated_users_can_update_replies()
+    {
+        $this->signIn();
+        $reply = create('App\Reply', ['user_id' => auth()->id()]);
+
+        $updateReply = 'you are changed!';
+
+        $this->patch("replies/{$reply->id}", ['body' => $updateReply]);
+
+        $this->assertDatabaseHas('replies', ['id' => $reply->id, 'body' => $updateReply]);
+    }
+
+    /** @test */
+    public function unauthenticated_users_cannot_update_replies()
+    {
+        $this->withExceptionHandling();
+
+        $reply = create('App\Reply');
+
+        $this->patch("replies/{$reply->id}")
+            ->assertRedirect('/login');
+
+        $this->signIn()
+            ->patch("replies/{$reply->id}")
+            ->assertStatus(403);
+    }
 }
