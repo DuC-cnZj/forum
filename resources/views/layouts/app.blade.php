@@ -13,6 +13,13 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
+    <script>
+        window.App = {!! json_encode([
+            'signedIn' => Auth::check(),
+            'user' => Auth::user(),
+        ]) !!}
+    </script>
+
     <style>
         body { padding-bottom: 100px; }
 
@@ -35,6 +42,6 @@
 </div>
 
 <!-- Scripts -->
-<script src="{{ mix('js/app.js') }}"></script>
+<script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>
