@@ -31,6 +31,21 @@ class FavoritesTest extends TestCase
     }
 
     /** @test */
+    public function an_authenticated_user_can_unfavorite_a_reply()
+    {
+        $this->signIn();
+
+        $reply = create('App\Reply');
+
+        $reply->favorite();
+
+        $this->delete('replies/' . $reply->id . '/favorites');
+
+        $this->assertCount(0, $reply->favorites);
+//        $this->assertDatabaseMissing('favorites', ['favorited_id' => $reply->id, 'user_id' => auth()->id()]);
+    }
+
+    /** @test */
     public function an_authenticated_user_can_only_favorite_a_reply_once()
     {
         $this->signIn();
@@ -51,4 +66,5 @@ class FavoritesTest extends TestCase
 
         $this->assertCount(1, $reply->favorites);
     }
+
 }
