@@ -27,23 +27,26 @@
                         </div>
                     </div>
 
-                    <replies :data="{{ $thread->replies }}" @removed="repliesCount--"></replies>
+                    <replies :data="{{ $thread->replies }}"
+                             @added="repliesCount++"
+                             @removed="repliesCount--"
+                    ></replies>
 
-{{--                    {{ $replies->links() }}--}}
+                    {{--                    {{ $replies->links() }}--}}
 
-                    @signIn
-                    <form action="{{ $thread->path() . "/replies" }}" method="POST">
-                        {{ csrf_field() }}
-                        <div class="form-group">
-                            <textarea name="body" id="body" class="form-control" rows="5"
-                                      placeholder="have something to say?"></textarea>
-                        </div>
+                    {{--@signIn--}}
+                    {{--<form action="{{ $thread->path() . "/replies" }}" method="POST">--}}
+                    {{--{{ csrf_field() }}--}}
+                    {{--<div class="form-group">--}}
+                    {{--<textarea name="body" id="body" class="form-control" rows="5"--}}
+                    {{--placeholder="have something to say?"></textarea>--}}
+                    {{--</div>--}}
 
-                        <button type="submit" class="btn btn-default">Post</button>
-                    </form>
-                    @else
-                        <p class="text-center">请 <a href="{{ route('login') }}">登陆</a> 之后再发表评论</p>
-                        @endsignIn
+                    {{--<button type="submit" class="btn btn-default">Post</button>--}}
+                    {{--</form>--}}
+                    {{--@else--}}
+                    {{--<p class="text-center">请 <a href="{{ route('login') }}">登陆</a> 之后再发表评论</p>--}}
+                    {{--@endsignIn--}}
                 </div>
 
                 <div class="col-md-4">
@@ -52,7 +55,9 @@
                             <p>
                                 This Thread was published {{ $thread->created_at->diffForHumans() }} by
                                 <a href="#">{{ $thread->creator->name }}</a>, and currently
-                                has <span v-text="repliesCount"></span> {{ str_plural('comment', $thread->replies_count) }}.
+                                has <span
+                                        v-text="repliesCount"></span> {{ str_plural('comment', $thread->replies_count) }}
+                                .
                             </p>
                         </div>
                     </div>
