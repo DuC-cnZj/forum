@@ -56,7 +56,22 @@ class Thread extends Model
 
     public function addReply($reply)
     {
-        return $this->replies()->create($reply);
+        $reply = $this->replies()->create($reply);
+
+        $this->subscriptions
+            ->filter(function ($sub) use ($reply) {
+                return $sub->user_id != $reply->user_id;
+            })->each->notify($reply);
+//            ->each(function ($sub) use ($reply) {
+//                $sub->user->notify(new ThreadWasUpdated($this, $reply));
+//            });
+//        foreach ($this->subscriptions as $subscription) {
+//            if ($subscription->user_id != $reply->user_id) {
+//                $subscription->user->notify(new ThreadWasUpdated($this, $reply));
+//            }
+//        }
+
+        return $reply;
     }
 
     public function scopeFilter($query, $filters)
@@ -69,6 +84,8 @@ class Thread extends Model
         $this->subscriptions()->create([
             'user_id' => $userId ?: auth()->id(),
         ]);
+
+        return $this;
     }
 
     public function subscriptions()

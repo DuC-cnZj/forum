@@ -34,7 +34,9 @@ Route::delete('replies/{reply}', 'RepliesController@destroy');
 Route::post('/threads/{channel}/{thread}/subscriptions', 'ThreadSubscriptionsController@store')->middleware('auth');
 Route::delete('/threads/{channel}/{thread}/subscriptions', 'ThreadSubscriptionsController@destroy')->middleware('auth');
 
-Route::get('profiles/{user}', 'ProfilesController@show')->name('profile');
+Route::get('/profiles/{user}', 'ProfilesController@show')->name('profile');
+Route::delete('/profiles/{user}/notifications/{notification}', 'UserNotificationsController@destroy');
+Route::get('/profiles/{user}/notifications', 'UserNotificationsController@index');
 
 Route::get('duc', function () {
     $collection = collect([1, 2, 3, 4]);
