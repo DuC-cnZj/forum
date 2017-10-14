@@ -30,8 +30,13 @@ class ParticipateInForumTest extends TestCase
 
         $this->post($thread->path() . '/replies', $reply->toArray());
 
-        $this->get($thread->path())
-            ->assertSee($reply->body);
+        $this->assertDatabaseHas('replies', ['body' => $reply->body]);
+
+        $this->assertEquals(1, $thread->fresh()->replies_count);
+//        $this->assertEquals(0, $thread->fresh()->replies_count);
+        // 因为是 javascript 所以测试无法找到，可以通过 database 来判断
+//        $this->get($thread->path())
+//            ->assertSee($reply->body);
     }
 
     /** @test */
@@ -77,8 +82,12 @@ class ParticipateInForumTest extends TestCase
         $this->signIn();
 
         $reply = create('App\Reply', ['user_id' => auth()->id()]);
+
         $this->delete("replies/{$reply->id}")->assertStatus(302);
-        $this->assertDatabaseMissing('replies', $reply->toArray());
+
+        $this->assertDatabaseMissing('replies', ['id' => $reply->id]);
+
+        $this->assertEquals(0, $reply->thread->fresh()->replies_count);
     }
 
     /** @test */
