@@ -2,7 +2,9 @@
 
 namespace Tests\Unit;
 
+use App\Notifications\ThreadWasUpdated;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -17,7 +19,7 @@ class ThreadTest extends TestCase
 
         $this->thread = create('App\Thread');
     }
-    
+
     /** @test */
     public function a_thread_can_make_a_string_path()
     {
@@ -42,13 +44,43 @@ class ThreadTest extends TestCase
     public function a_thread_can_add_a_reply()
     {
         $this->thread->addReply([
-           'body' => 'FooBar',
-           'user_id' => 1,
+            'body'    => 'FooBar',
+            'user_id' => 1,
         ]);
 
         $this->assertCount(1, $this->thread->replies);
     }
-    
+
+    /** @test */
+    public function a_thread_can_notify_all_registered_subscribers_when_a_reply_is_added()
+    {
+        Notification::fake();
+
+        $this->signIn()
+            ->thread
+            ->subscribe()
+            ->addReply([
+                'body'    => 'da',
+                'user_id' => 999,
+            ]);
+
+        Notification::assertSentTo(auth()->user(), ThreadWasUpdated::class);
+
+//        $thread = create('App\Thread');
+//
+//        $userOne = create('App\User');
+//        $userTwo = create('App\User');
+//
+//        $thread->subscribe($userOne->id);
+//        $thread->subscribe($userTwo->id);
+//
+//        $reply = make('App\Reply');
+//
+//        $thread->addReply($reply->toArray());
+//
+//        $this->assertCount(2, $thread->subscriptions);
+    }
+
     /** @test */
     public function a_thread_belongs_to_channel()
     {
@@ -56,7 +88,7 @@ class ThreadTest extends TestCase
 
         $this->assertInstanceOf('App\Channel', $thread->channel);
     }
-    
+
     /** @test */
     public function a_thread_can_be_subscribed_to()
     {
@@ -69,7 +101,7 @@ class ThreadTest extends TestCase
             $thread->subscriptions()->where('user_id', $userId)->get()
         );
     }
-    
+
     /** @test */
     public function a_thread_can_be_unsubscribed_from()
     {
