@@ -117,4 +117,22 @@ class ParticipateInForumTest extends TestCase
             ->patch("replies/{$reply->id}")
             ->assertStatus(403);
     }
+
+    /** @test */
+    public function replies_that_contain_spam_may_not_be_created()
+    {
+        $this->be($user = factory('App\User')->create());
+//        $user = factory('App\User')->create();
+
+        $thread = factory('App\Thread')->create();
+
+        $reply = factory('App\Reply')->make([
+            'body' => 'Yahoo..',
+        ]);
+
+        $this->expectException(\Exception::class);
+
+        $this->post($thread->path() . '/replies', $reply->toArray());
+
+    }
 }

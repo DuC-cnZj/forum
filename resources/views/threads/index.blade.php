@@ -10,7 +10,7 @@
                         <div class="panel-heading">
                             <div class="level">
                                 <h4 class="flex">
-                                    @if($thread->hasUpdatesFor(auth()->user()))
+                                    @if(auth()->check() && $thread->hasUpdatesFor(auth()->user()))
                                         <strong>
                                             <a href="{{ $thread->path() }}">
                                                 {{ $thread->title }}
