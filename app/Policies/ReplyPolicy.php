@@ -14,4 +14,9 @@ class ReplyPolicy
     {
         return $reply->user_id == $user->id;
     }
+
+    public function create(User $user)
+    {
+        return ! optional($user->lastReply)->wasJustPublished();
+    }
 }

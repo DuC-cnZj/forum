@@ -39,12 +39,12 @@ class ParticipateInForumTest extends TestCase
 //            ->assertSee($reply->body);
     }
 
-    /** @test */
-    public function a_reply_requires_a_body()
-    {
-        $this->publishReply(['body' => null])
-            ->assertSessionHasErrors('body');
-    }
+//    /** @test */
+//    public function a_reply_requires_a_body()
+//    {
+//        $this->publishReply(['body' => null])
+//            ->assertSessionHasErrors('body');
+//    }
 
     public function publishReply($overrides = [])
     {
@@ -132,6 +132,25 @@ class ParticipateInForumTest extends TestCase
 
         $this->post($thread->path() . '/replies', $reply->toArray())
             ->assertStatus(422);
+
+    }
+    
+    /** @test */
+    public function users_can_only_reply_a_maximum_of_once_per_minute()
+    {
+        $this->signIn();
+
+        $thread = create('App\Thread');
+
+        $reply = make('App\Reply', [
+            'body' => 'Yahoodafas..',
+        ]);
+
+        $this->post($thread->path() . '/replies', $reply->toArray())
+            ->assertStatus(200);
+
+        $this->post($thread->path() . '/replies', $reply->toArray())
+            ->setStatusCode(422);
 
     }
 }
