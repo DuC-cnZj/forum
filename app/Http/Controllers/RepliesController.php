@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreatePostRequest;
 use App\Reply;
 use App\Rules\SpamFree;
 use App\Thread;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 
 class RepliesController extends Controller
 {
@@ -21,29 +20,12 @@ class RepliesController extends Controller
         return $thread->replies()->paginate(5);
     }
 
-    public function store($channelId, Thread $thread)
+    public function store($channelId, Thread $thread, CreatePostRequest $form)
     {
-        if (Gate::denies('create', new Reply())) {
-            return response(
-                '发表评论太频繁',429
-            );
-        }
-
-        try {
-//            $this->authorize('create', new Reply());
-            request()->validate(['body' => ['required', new SpamFree]]);
-
-            $reply = $thread->addReply([
-                'body'    => request('body'),
-                'user_id' => auth()->id(),
-            ]);
-        } catch (\Exception $e) {
-            return response(
-                'sorry can\'t',422
-            );
-        }
-
-        return $reply->load('owner');
+        return $thread->addReply([
+            'body'    => request('body'),
+            'user_id' => auth()->id(),
+        ])->load('owner');
     }
 
     public function update(Reply $reply)
