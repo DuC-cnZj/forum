@@ -33,8 +33,8 @@ Vue.component('user-notifications', require('./components/UserNotifications.vue'
 
 window.events = new Vue();
 
-window.flash = function (message) {
-    window.events.$emit('flash', message);
+window.flash = function (message, level = 'success') {
+    window.events.$emit('flash', { message, level });
 };
 
 const app = new Vue({
