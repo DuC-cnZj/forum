@@ -3,13 +3,12 @@
         <div v-if="signedIn">
             <div class="form-group">
                 <textarea name="body"
-                          rows="5"
                           id="body"
-                          v-model="body"
                           class="form-control"
-                          placeholder="have something to say?"
+                          placeholder="Have something to say?"
+                          rows="5"
                           required
-                ></textarea>
+                          v-model="body"></textarea>
             </div>
 
             <button type="submit"
@@ -19,25 +18,40 @@
         </div>
 
         <p class="text-center" v-else>
-            请 <a href="/login">登陆</a> 之后再发表评论
+            Please <a href="/login">sign in</a> to participate in this
+            discussion.
         </p>
     </div>
 </template>
 
 <script>
+    import 'jquery.caret';
+    import 'at.js';
+
     export default {
         data() {
             return {
-                body: '',
-            }
+                body: ''
+            };
         },
-
         computed: {
             signedIn() {
                 return window.App.signedIn;
             }
         },
-
+        mounted() {
+            $('#body').atwho({
+                at: "@",
+                delay: 750,
+                callbacks: {
+                    remoteFilter: function (query, callback) {
+                        $.getJSON("/api/users", {name: query}, function (usernames) {
+                            callback(usernames)
+                        });
+                    }
+                }
+            });
+        },
         methods: {
             addReply() {
                 axios.post(location.pathname + '/replies', {body: this.body})
@@ -46,9 +60,7 @@
                     })
                     .then(({data}) => {
                         this.body = '';
-
-                        flash('your reply has been posted.');
-
+                        flash('Your reply has been posted.');
                         this.$emit('created', data);
                     });
             }

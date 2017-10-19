@@ -44,7 +44,7 @@
             refresh({data}) {
                 this.dataSet = data;
                 this.items = data.data;
-console.log(this.items);
+
                 window.scrollTo(0, 0);
             }
         }
