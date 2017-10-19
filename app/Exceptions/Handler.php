@@ -51,12 +51,12 @@ class Handler extends ExceptionHandler
     {
         if ($exception instanceof ValidationException) {
             if ($request->expectsJson()) {
-                return response('sorry', 422);
+                return response('Sorry, validation failed.', 422);
             }
         }
 
         if ($exception instanceof ThrottleException) {
-            return response('sorry', 429);
+            return response($exception->getMessage(), 429);
         }
 
         return parent::render($request, $exception);

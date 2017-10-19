@@ -33,15 +33,19 @@ class NotifyMentionedUsers
 //        dd($matches);
 //        $mentionedUsers = $event->reply->mentionedUsers();
 
-        collect($event->reply->mentionedUsers())
-            ->map(function ($name) {
-                return User::whereName($name)->first();
-//                if ($user) return $user;
-            })
-            ->filter()
-            ->each(function ($user) use ($event) {
-                $user->notify(new YouWereMentioned($event->reply));
-            });
+        User::whereIn('name', $event->reply->mentionedUsers())
+            ->get()
+            ->each
+            ->notify(new YouWereMentioned($event->reply));
+//        collect($event->reply->mentionedUsers())
+//            ->map(function ($name) {
+//                return User::whereName($name)->first();
+////                if ($user) return $user;
+//            })
+//            ->filter()
+//            ->each(function ($user) use ($event) {
+//                $user->notify(new YouWereMentioned($event->reply));
+//            });
 //
 //        foreach ($mentionedUsers as $name) {
 //            $user = User::whereName($name)->first();
