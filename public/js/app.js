@@ -1942,7 +1942,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.dataSet = data;
             this.items = data.data;
-
+            console.log(this.items);
             window.scrollTo(0, 0);
         }
     }
@@ -48999,7 +48999,7 @@ var render = function() {
                 )
               ])
             ])
-          : _c("div", { domProps: { textContent: _vm._s(_vm.body) } })
+          : _c("div", { domProps: { innerHTML: _vm._s(_vm.body) } })
       ]),
       _vm._v(" "),
       _vm.canUpdate
