@@ -10,26 +10,21 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class ThreadHasNewReply
+class ThreadReceivedNewReply
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    public $thread;
 
     public $reply;
 
     /**
-     * Create a new event instance.
-     *
-     * @param $thread
+     * ThreadReceivedNewReply constructor.
      * @param $reply
      */
-    public function __construct($thread, $reply)
+    public function __construct($reply)
     {
-        //
-        $this->thread = $thread;
         $this->reply = $reply;
     }
+
 
     /**
      * Get the channels the event should broadcast on.
