@@ -70,7 +70,7 @@
             },
 
             canUpdate() {
-                return this.authorize(user => user.id == this.data.user_id);
+                return this.authorize(user => user.id === this.data.user_id);
 //                return this.data.user_id == window.App.user.id;
             }
         },
