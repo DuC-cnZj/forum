@@ -2,14 +2,12 @@
 
 namespace App;
 
-use App\Events\ThreadHasNewReply;
 use App\Events\ThreadReceivedNewReply;
-use App\Notifications\YouWereMentioned;
 use Illuminate\Database\Eloquent\Model;
 
 class Thread extends Model
 {
-    use RecordsActivity;
+    use RecordsActivity, RecordsVisits;
 
     protected $guarded = [];
 
@@ -108,7 +106,7 @@ class Thread extends Model
         return $this->updated_at > cache($key);
     }
 
-//    public function isSubscribedTo()
+    //    public function isSubscribedTo()
 //    {
 ////        dd($this->subscriptions);
 //        return !! $this->subscriptions()->where('user_id', auth()->id())->exists();

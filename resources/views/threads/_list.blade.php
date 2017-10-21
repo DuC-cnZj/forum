@@ -30,6 +30,10 @@
         <div class="panel-body">
             <div class="body">{{ $thread->body  }}</div>
         </div>
+
+        <div class="panel-footer">
+            {{ $thread->visits() }} visits.
+        </div>
     </div>
 @empty
     <p>There Are No Threads At All</p>
