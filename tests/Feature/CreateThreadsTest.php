@@ -134,7 +134,6 @@ class CreateThreadsTest extends TestCase
         $this->assertEquals(0, Activity::count());
     }
 
-
 //    /** @test */
 //    public function threads_can_only_be_deleted_by_those_who_has_permission()
 //    {
