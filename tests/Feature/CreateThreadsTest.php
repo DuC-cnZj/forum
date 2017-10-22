@@ -134,6 +134,13 @@ class CreateThreadsTest extends TestCase
         $this->assertEquals(0, Activity::count());
     }
 
+    /** @test */
+    public function authenticated_users_must_first_confirm_their_email_address_before_creating_threads()
+    {
+        $this->publishThread()
+            ->assertRedirect('/threads')
+            ->assertSessionHas('flash', '请先验证邮箱。');
+    }
 //    /** @test */
 //    public function threads_can_only_be_deleted_by_those_who_has_permission()
 //    {
