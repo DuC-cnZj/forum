@@ -30,7 +30,7 @@
                     this.body = data.message;
                     this.level = data.level;
                 }
-                
+
                 this.show = true;
 
                 this.hide();
