@@ -7,7 +7,7 @@ use Exception;
 class InvalidKeywords
 {
     protected $keywords = [
-         'duc', 'Yahoo..'
+         'fuck', '艹'
     ];
 
     public function detect($body)

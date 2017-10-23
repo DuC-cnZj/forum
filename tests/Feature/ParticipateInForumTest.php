@@ -129,7 +129,7 @@ class ParticipateInForumTest extends TestCase
         $thread = factory('App\Thread')->create();
 
         $reply = factory('App\Reply')->make([
-            'body' => 'Yahoo..',
+            'body' => 'fuck',
         ]);
 
         $this->json('post', $thread->path() . '/replies', $reply->toArray())

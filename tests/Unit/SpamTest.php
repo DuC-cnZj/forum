@@ -20,7 +20,7 @@ class SpamTest extends TestCase
 
         $this->expectException('Exception');
 
-        $spam->detect('duc');
+        $spam->detect('艹');
     }
     
     /** @test */
