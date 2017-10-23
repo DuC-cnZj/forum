@@ -17,20 +17,20 @@ class CreateThreadsTest extends TestCase
         $this->withExceptionHandling();
 
         $this->get('/threads/create')
-            ->assertRedirect('/login');
+            ->assertRedirect(route('login'));
 
-        $this->post('/threads')
-            ->assertRedirect('/login');
+        $this->post(route('threads'))
+            ->assertRedirect(route('login'));
 
 //        $this->expectException('Illuminate\Auth\AuthenticationException');
 //
 //        $thread = make('App\Thread');
 //
-//        $this->post('/threads', $thread->toArray());
+//        $this->post(route('threads, $thread->toArray());
     }
 
     /** @test */
-    public function an_authenticated_user_can_crate_new_forum_thread()
+    public function new_user_can_crate_new_forum_thread()
     {
         // 给我一个登陆的用户
 //        $this->actingAs(factory('App\User')->create());
@@ -41,7 +41,7 @@ class CreateThreadsTest extends TestCase
 //        $thread = factory('App\Thread')->raw();
         $thread = make('App\Thread');
 
-        $response = $this->post('/threads', $thread->toArray());
+        $response = $this->post(route('threads'), $thread->toArray());
 //        dd($response->headers->get('Location'));
         // 可以看到 thread page
         $response = $this->get($response->headers->get('Location'));
@@ -86,7 +86,7 @@ class CreateThreadsTest extends TestCase
 
 //        dd($thread);
 
-        return $this->post('/threads', $thread->toArray());
+        return $this->post(route('threads'), $thread->toArray());
     }
 
     /** @test */
@@ -96,7 +96,7 @@ class CreateThreadsTest extends TestCase
         $thread = create('App\Thread');
 
         $this->delete($thread->path())
-            ->assertRedirect('/login');
+            ->assertRedirect(route('login'));
 
         $this->signIn();
 
@@ -135,10 +135,16 @@ class CreateThreadsTest extends TestCase
     }
 
     /** @test */
-    public function authenticated_users_must_first_confirm_their_email_address_before_creating_threads()
+    public function new_users_must_first_confirm_their_email_address_before_creating_threads()
     {
-        $this->publishThread()
-            ->assertRedirect('/threads')
+        $user = factory('App\User')->states('unconfirmed')->create();
+
+        $this->signIn($user);
+
+        $thread = make('App\Thread');
+
+        $this->post(route('threads'), $thread->toArray())
+            ->assertRedirect(route('threads'))
             ->assertSessionHas('flash', '请先验证邮箱。');
     }
 //    /** @test */
@@ -152,6 +158,6 @@ class CreateThreadsTest extends TestCase
 //    {
 //        $this->withExceptionHandling()
 //            ->get('/threads/create')
-//            ->assertRedirect('/login');
+//            ->assertRedirect(route('login'));
 //    }
 }
