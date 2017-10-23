@@ -18,7 +18,6 @@ class RegistrationTest extends TestCase
     {
         Mail::fake();
 
-//        event(new Registered(create('App\User')));
         $this->post(route('register'), [
             'name'                  => 'test',
             'email'                 => '10254@qqc.c',
@@ -27,14 +26,14 @@ class RegistrationTest extends TestCase
         ]);
 
 
-        Mail::assertSent(PleaseConfirmYourEmail::class);
+        Mail::assertQueued(PleaseConfirmYourEmail::class);
     }
 
     /** @test */
     function user_can_fully_confirm_their_email_addresses()
     {
         Mail::fake();
-        
+
         $this->post(route('register'), [
             'name'                  => 'test',
             'email'                 => '10254@qqc.c',
@@ -51,9 +50,12 @@ class RegistrationTest extends TestCase
         $this->get(route('register.confirm', ['token' => $user->confirmation_token]))
             ->assertRedirect(route('threads'));
 
-        $this->assertTrue($user->fresh()->confirmed);
+        tap($user->fresh(), function ($user) {
+            $this->assertTrue($user->confirmed);
+            $this->assertNull($user->confirmation_token);
+        });
     }
-    
+
     /** @test */
     function confirming_an_invalid_token()
     {
