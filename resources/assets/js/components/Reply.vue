@@ -38,11 +38,11 @@
 
         <!--@can('update', $reply)-->
         <div class="panel-footer level">
-            <div v-if="canUpdate">
+            <div v-if="authorize('updateReply', reply)">
                 <button class="btn btn-xs mr-1" @click="editing = true">Edit</button>
                 <button class="btn btn-xs btn-danger mr-1" @click="destroy">Delete</button>
             </div>
-            
+
             <button class="btn btn-xs btn-default ml-a" @click="markBestReply" v-show="! isBest">Best Reply</button>
         </div>
         <!--@endcan-->
@@ -64,6 +64,7 @@
                 body: this.data.body,
                 id: this.data.id,
                 isBest: false,
+                reply: this.data
             }
         },
 
@@ -71,15 +72,6 @@
             ago() {
                 return moment(this.data.created_at).fromNow();
             },
-
-            signedIn() {
-                return window.App.signedIn;
-            },
-
-            canUpdate() {
-                return this.authorize(user => user.id === this.data.user_id);
-//                return this.data.user_id == window.App.user.id;
-            }
         },
 
         methods: {
