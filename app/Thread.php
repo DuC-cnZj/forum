@@ -48,6 +48,11 @@ class Thread extends Model
         $this->attributes['slug'] = $slug;
     }
 
+    public function markBestReply($reply)
+    {
+        $this->update(['best_reply_id' => $reply->id]);
+    }
+
     public function path()
     {
         return "/threads/{$this->channel->slug}/{$this->slug}";
