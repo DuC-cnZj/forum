@@ -1,7 +1,7 @@
 let user = window.App.user;
 
 module.exports = {
-    updateReply(reply) {
-        return reply.user.id === user.id;
+    updateReply (reply) {
+        return reply.user_id === user.id;
     }
 };

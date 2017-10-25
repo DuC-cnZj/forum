@@ -63,9 +63,15 @@
                 editing: false,
                 body: this.data.body,
                 id: this.data.id,
-                isBest: false,
+                isBest: this.data.isBest,
                 reply: this.data
             }
+        },
+
+        created() {
+            window.events.$on('best-reply-selected', id => {
+                this.isBest = (id === this.id);
+            });
         },
 
         computed: {
@@ -97,10 +103,13 @@
             },
 
             markBestReply() {
-                this.isBest = true;
+//                axios.post('/replies/' + this.data.id + '/best');
+//
+//                window.events.$emit('best-reply-selected', this.data.id)
 
                 axios.post('/replies/' + this.data.id + '/best');
 
+                window.events.$emit('best-reply-selected', this.data.id);
             }
         }
     }
