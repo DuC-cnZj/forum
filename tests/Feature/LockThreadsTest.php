@@ -10,7 +10,30 @@ class LockThreadsTest extends TestCase
     use DatabaseMigrations;
 
     /** @test */
-    function an_adminstrator_can_lock_any_thread()
+    function non_administrators_may_not_lock_threads()
+    {
+        $this->withExceptionHandling();
+        $this->signIn();
+        $thread = create('App\Thread', ['user_id' => auth()->id()]);
+
+        $this->post(route('locked-threads.store', $thread))->assertStatus(403);
+
+        $this->assertFalse(! ! $thread->fresh()->locked);
+    }
+
+    /** @test */
+    function administrators_can_lock_threads()
+    {
+        $this->signIn(factory('App\User')->states('administrator')->create());
+
+        $thread = create('App\Thread');
+        $this->post(route('locked-threads.store', $thread));
+        $this->assertTrue(!! $thread->fresh()->locked, 'failed');
+
+    }
+
+    /** @test */
+    function once_locked_a_thread_may_not_receive_replies()
     {
         $this->signIn();
 
@@ -19,7 +42,7 @@ class LockThreadsTest extends TestCase
         $thread->lock();
 
         $this->post($thread->path() . '/replies', [
-            'body' => 'fix',
+            'body'    => 'fix',
             'user_id' => create('App\User')->id,
         ])->assertStatus(422);
 
