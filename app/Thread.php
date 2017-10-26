@@ -130,6 +130,11 @@ class Thread extends Model
 
         return $this->updated_at > cache($key);
     }
+
+    public function lock()
+    {
+        $this->update(['locked' => true]);
+    }
     //    public function isSubscribedTo()
 //    {
 ////        dd($this->subscriptions);
