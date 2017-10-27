@@ -6,7 +6,10 @@
 
         <paginator :dataSet="dataSet" @changed="fetch"></paginator>
 
-        <new-reply @created="add"></new-reply>
+        <p v-if="$parent.locked">
+            对不起你该评论已被锁定。
+        </p>
+        <new-reply @created="add" v-else></new-reply>
     </div>
 </template>
 
