@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Activity;
+use App\Rules\Recaptcha;
 use App\Thread;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
@@ -11,6 +12,17 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class CreateThreadsTest extends TestCase
 {
     use DatabaseMigrations;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        app()->singleton(Recaptcha::class, function () {
+            return \Mockery::mock(Recaptcha::class, function ($m) {
+                $m->shouldReceive('passes')->andReturn(true);
+            });
+        });
+    }
 
     /** @test */
     public function guests_may_not_create_threads()
@@ -31,25 +43,13 @@ class CreateThreadsTest extends TestCase
     }
 
     /** @test */
-    public function new_user_can_crate_new_forum_thread()
+    public function new_user_can_create_new_forum_thread()
     {
-        // 给我一个登陆的用户
-//        $this->actingAs(factory('App\User')->create());
-
-        $this->signIn();
-
-        // 点击发表评论 raw() 返回数组
-//        $thread = factory('App\Thread')->raw();
-        $thread = make('App\Thread');
-
-        $response = $this->post(route('threads'), $thread->toArray());
-//        dd($response->headers->get('Location'));
+        $response = $this->publishThread(['title' => 'foo', 'body' => 'bar']);
         // 可以看到 thread page
-        $response = $this->get($response->headers->get('Location'));
-
-        // 可以看到评论内容
-        $response->assertSee($thread->title)
-            ->assertSee($thread->body);
+        $response = $this->get($response->headers->get('Location'))
+            ->assertSee('foo')
+            ->assertSee('bar');
     }
 
     /** @test */
@@ -61,18 +61,18 @@ class CreateThreadsTest extends TestCase
 
         $this->assertEquals($thread->fresh()->slug, 'aaa-aaa');
 
-        $thread = $this->postJson(route('threads'), $thread->toArray())->json();
+        $thread = $this->postJson(route('threads'), $thread->toArray() + ['g-recaptcha-response' => 'token'])->json();
 
         $this->assertEquals("aaa-aaa-{$thread['id']}", $thread['slug']);
     }
-    
+
     /** @test */
     function a_thread_with_a_title_that_ends_in_a_number_should_generate_the_proper_slug()
     {
         $this->signIn();
         $thread = create('App\Thread', ['title' => 'he is 24']);
 //dd($thread);
-        $thread = $this->postJson(route('threads'), $thread->toArray())->json();
+        $thread = $this->postJson(route('threads'), $thread->toArray() + ['g-recaptcha-response' => 'token'])->json();
 
         $this->assertTrue(Thread::whereSlug("he-is-24-{$thread['id']}")->exists());
 
@@ -113,7 +113,7 @@ class CreateThreadsTest extends TestCase
 
 //        dd($thread);
 
-        return $this->post(route('threads'), $thread->toArray());
+        return $this->post(route('threads'), $thread->toArray() + ['g-recaptcha-response' => 'token']);
     }
 
     /** @test */
@@ -173,6 +173,14 @@ class CreateThreadsTest extends TestCase
         $this->post(route('threads'), $thread->toArray())
             ->assertRedirect(route('threads'))
             ->assertSessionHas('flash', '请先验证邮箱。');
+    }
+
+//    /** @test */
+    function a_thread_requires_a_recaptcha_verification()
+    {
+        unset(app()[Recaptcha::class]);
+        $this->publishThread(['g-recaptcha-response' => 'test'])
+            ->assertSessionHasErrors('g-recaptcha-response');
     }
 //    /** @test */
 //    public function threads_can_only_be_deleted_by_those_who_has_permission()
