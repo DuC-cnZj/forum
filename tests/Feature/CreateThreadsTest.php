@@ -182,6 +182,7 @@ class CreateThreadsTest extends TestCase
         $this->publishThread(['g-recaptcha-response' => 'test'])
             ->assertSessionHasErrors('g-recaptcha-response');
     }
+
 //    /** @test */
 //    public function threads_can_only_be_deleted_by_those_who_has_permission()
 //    {
