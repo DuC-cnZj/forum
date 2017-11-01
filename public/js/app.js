@@ -3353,7 +3353,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         return {
             editing: false,
             body: this.reply.body,
-            id: this.id,
+            id: this.reply.id,
             isBest: this.reply.isBest
         };
     },
@@ -3507,7 +3507,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             repliesCount: this.thread.replies_count,
-            locked: this.thread.locked
+            locked: this.thread.locked,
+            editing: false
         };
     },
 

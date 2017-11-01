@@ -62,7 +62,7 @@
             return {
                 editing: false,
                 body: this.reply.body,
-                id: this.id,
+                id: this.reply.id,
                 isBest: this.reply.isBest,
             }
         },
