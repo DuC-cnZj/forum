@@ -6,11 +6,29 @@
             <div class="col-md-8">
                 @include('threads._list')
 
-                {{ $threads->links() }}
+                {{ $threads->render() }}
             </div>
 
             <div class="col-md-4">
-                @if(count($trending) > 0)
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Search
+                </div>
+
+                <div class="panel-body">
+                    <form action="/threads/search" method="GET">
+                        <div class="form-group">
+                            <input type="text" placeholder="search something ..." name="q" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-default" type="submit">Search</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+                @if(count($trending))
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             Trending Threads
